@@ -96,22 +96,6 @@ export const ManageRolesPage = () => {
   } = useSuperAdmins();
   const permissions = usePermissions();
 
-  // Check if user has permission to manage roles
-  if (!permissions.canManageSuperAdminRoles) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <h3 className="text-lg font-semibold text-muted-foreground">
-            Access Denied
-          </h3>
-          <p className="text-sm text-muted-foreground mt-2">
-            You do not have permission to manage user roles.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   useEffect(() => {
     // Avoid making unnecessary API calls if the search term hasn't actually changed
     if (debouncedSearchTerm === previousSearchTerm.current) {
@@ -216,10 +200,8 @@ export const ManageRolesPage = () => {
           // Find the admin data from superAdmins array
           const adminData = superAdmins.find((sa) => sa.id === adminId);
 
-          const [dropdownOpen, setDropdownOpen] = useState(false);
-
           return (
-            <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+            <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <MoreVertical className="h-4 w-4" />
@@ -264,6 +246,22 @@ export const ManageRolesPage = () => {
     ],
     [superAdmins, deleting, deleteSuperAdmin]
   );
+
+  // Check if user has permission to manage roles
+  if (!permissions.canManageSuperAdminRoles) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-muted-foreground">
+            Access Denied
+          </h3>
+          <p className="text-sm text-muted-foreground mt-2">
+            You do not have permission to manage user roles.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   // Show loading state
   if (loading) {

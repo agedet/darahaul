@@ -22,7 +22,7 @@ const editAdminSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
-  role: z.string({ required_error: "A role must be selected" }),
+  role: z.string().min(1, "A role must be selected"),
 });
 
 type EditAdminFormValues = z.infer<typeof editAdminSchema>;

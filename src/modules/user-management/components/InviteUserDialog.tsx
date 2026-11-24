@@ -28,7 +28,7 @@ const inviteSchema = z.object({
   last_name: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
   phone_number: z.string().optional(),
-  role: z.string({ required_error: "A role must be selected" }),
+  role: z.string().min(1, "A role must be selected"),
 });
 
 type InviteFormValues = z.infer<typeof inviteSchema>;

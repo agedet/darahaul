@@ -70,7 +70,7 @@ export const useResendInvitation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) =>
-      Api.post<Invitation>(`/invitations/${id}/resend`),
+      Api.post<Invitation>(`/invitations/${id}/resend`, {}),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: invitationsKeys.all });
     },

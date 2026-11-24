@@ -8,7 +8,7 @@ import { useSearch } from "../context/SearchContext";
 export const AdminDashboardHeader = () => {
   const location = useLocation();
   const { searchTerm, setSearchTerm } = useSearch();
-  const { user, role } = useUserAuth();
+  const { role } = useUserAuth();
 
   // Check if current page is the dashboard
   const isDashboardPage = location.pathname === "/admin/dashboard";

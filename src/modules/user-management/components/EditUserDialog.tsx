@@ -16,7 +16,6 @@ import {
 import { Form } from "@/components/ui/form";
 import TextInputField from "@/components/TextInputField";
 import SelectField from "@/components/SelectField";
-import { DashboardButton } from "@/components/DashboardButton";
 import {
   useUpdateUser,
   type ManagedUser,
@@ -28,7 +27,7 @@ const editUserSchema = z.object({
   last_name: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
   phone_number: z.string().optional(),
-  role: z.string({ required_error: "A role must be selected" }),
+  role: z.string().min(1, "A role must be selected"),
 });
 
 type EditUserFormValues = z.infer<typeof editUserSchema>;
