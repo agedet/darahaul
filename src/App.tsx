@@ -1,121 +1,100 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { BrowserRouter as Router, Routes, Route } from 'react-router';
 import './App.css'
+import { Providers } from './components/providers';
+import { ProtectedRoute } from './components/auth';
+import Onboarding from './modules/Onboarding';
+import AuthIndex from './modules/authentication/AuthIndex';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Index from './Index';
+import MechanicIndex from './modules/mechanic/MechanicIndex';
+import DriverIndex from './modules/driver/DriverIndex';
+import AdminIndex from './modules/admin/AdminIndex';
+import CompanyIndex from './modules/company/CompanyIndex';
+import AcceptInvitation from './modules/authentication/pages/AcceptInvitation';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <Providers>
+          <Routes>
+            <Route path="/" element={<Index />} />
 
-      <div className="ticks"></div>
+            {/* Auth Routes */}
+            <Route
+              path="/auth/*"
+              element={<AuthIndex />}
+            />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+            {/* Public invitation acceptance */}
+            <Route
+              path="/invite/accept"
+              element={<AcceptInvitation />}
+            />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+            {/* Onboarding Route */}
+            <Route
+              path="/onboarding"
+              element={
+                <ProtectedRoute allowedRoles={['Mechanic', 'Driver']}>
+                  <Onboarding />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Admin Routes */}
+            <Route 
+              path='/company/*'
+              element={
+                <ProtectedRoute allowedRoles={['Admin_L1', 'Admin_L2']}>
+                  <CompanyIndex />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* SuperAdmin Routes */}
+            <Route
+              path="/admin/*"
+              element={
+                <ProtectedRoute allowedRoles={['Super_Admin']}>
+                  <AdminIndex />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Mechanic Routes */}
+            <Route
+              path="/mechanic/*"
+              element={
+                <ProtectedRoute allowedRoles={['Mechanic']}>
+                  <MechanicIndex />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Driver Routes */}
+            <Route
+              path="/driver/*"
+              element={
+                <ProtectedRoute allowedRoles={['Driver']}>
+                  <DriverIndex />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </Providers>
+      </Router>
+    </QueryClientProvider>
   )
 }
 
